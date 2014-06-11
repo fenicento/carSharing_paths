@@ -35,7 +35,6 @@ Giorgio giorgio= new Giorgio();
 void setup() {
   size(1920, 1080, OPENGL);
   smooth();
-  println(giorgio);
   map = new UnfoldingMap(this, giorgio);
   markerManager = map.getDefaultMarkerManager();
   map.zoomAndPanTo(new Location(45.467117286247066, 9.187265743530346), 13);
@@ -51,7 +50,6 @@ void draw() {
   if (start.before(end)) {
     newMarkers.clear();
     newCars.clear();
-    println("start date "+start);
 
     Iterator<Marker> i = addedMarkers.iterator();
     Iterator<Car> z = addedCars.iterator();
@@ -117,7 +115,7 @@ void draw() {
           HashMap<java.lang.String, java.lang.Object> props = feature.getProperties();
           props.put("vecs", vecs);
           m.setProperties(props);
-          m.setStrokeWeight(2);
+          m.setStrokeWeight(3);
           Car c = new Car(vecs, m.getStringProperty("start"), m.getStringProperty("end"));
           
           feature.putProperty("start", "");
