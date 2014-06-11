@@ -17,7 +17,7 @@ import de.fhpotsdam.unfolding.providers.*;
 
 
 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
-SimpleDateFormat format2 = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.ENGLISH);
+SimpleDateFormat format2 = new SimpleDateFormat("yyyy/MM/dd  HH:mm", Locale.ENGLISH);
 
 UnfoldingMap map;
 List<Marker> transitMarkers = new ArrayList<Marker>();
@@ -31,6 +31,7 @@ Date start = new Date(1393192800000L);
 Date end = new Date(1393736400000L);
 List<Feature> transitLines;
 Giorgio giorgio= new Giorgio();
+PFont raleway  = createFont("Raleway-Bold", 32);
 
 void setup() {
   size(1920, 1080, OPENGL);
@@ -43,10 +44,16 @@ void setup() {
   transitLines = GeoJSONReader.loadData(this, "all_rents_geojson.json");
 
   // Create markers from features, and use LINE property to color the markers.
+  map.draw();
 }
 
 void draw() {
-  background(100);
+  
+  if(millis()<10000) {
+    map.draw();
+    return;
+  }
+  
   if (start.before(end)) {
     newMarkers.clear();
     newCars.clear();
@@ -141,11 +148,12 @@ void draw() {
     textSize(32);
     fill(232, 193, 2, 255);
     map.draw();
+    textFont(raleway);
     text(format2.format(start), 35, 35);
   } else {
-    background(255);
-    text("THE END", 30, 30);
+    map.draw();
   }
+  saveFrame("car-######.png");
 }
 
 public void keyPressed() {
