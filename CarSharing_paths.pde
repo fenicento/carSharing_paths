@@ -1,4 +1,3 @@
-
 import de.fhpotsdam.unfolding.*;
 import de.fhpotsdam.unfolding.utils.*;
 import de.fhpotsdam.unfolding.marker.*;
@@ -15,9 +14,17 @@ import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import de.fhpotsdam.unfolding.providers.*;
 
-
+Calendar cal = Calendar.getInstance();
+TimeZone tz = TimeZone.getTimeZone("Europe/Rome"); 
 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
-SimpleDateFormat format2 = new SimpleDateFormat("yyyy/MM/dd  HH:mm", Locale.ENGLISH);
+SimpleDateFormat hour = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+SimpleDateFormat day = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+SimpleDateFormat weekday = new SimpleDateFormat("EEEE", Locale.ENGLISH);
+
+//format.setTimeZone(tz);
+//hour.setTimeZone(tz);
+//day.setTimeZone(tz);
+//weekday.setTimeZone(tz);
 
 UnfoldingMap map;
 List<Marker> transitMarkers = new ArrayList<Marker>();
@@ -31,11 +38,19 @@ Date start = new Date(1393192800000L);
 Date end = new Date(1393736400000L);
 List<Feature> transitLines;
 Giorgio giorgio= new Giorgio();
-PFont raleway  = createFont("Raleway-Bold", 32);
+PFont raleway  = createFont("Raleway-Heavy", 32);
+PFont raleway2  = createFont("Raleway-Bold", 14);
+PImage clock; 
+PImage calendar;
 
 void setup() {
   size(1920, 1080, OPENGL);
   smooth();
+  clock = loadImage("clock.png");
+  calendar = loadImage("calendar.png");
+  cal.setTime(start); // sets calendar time/date
+  cal.add(Calendar.HOUR_OF_DAY, 1); // adds one hour
+  start=cal.getTime(); // returns new date object, one hour in the future
   map = new UnfoldingMap(this, giorgio);
   markerManager = map.getDefaultMarkerManager();
   map.zoomAndPanTo(new Location(45.467117286247066, 9.187265743530346), 13);
@@ -49,8 +64,9 @@ void setup() {
 
 void draw() {
   
-  if(millis()<10000) {
+  if(millis()<5000) {
     map.draw();
+    //saveFrame("frames/cars-######.png");
     return;
   }
   
@@ -146,14 +162,24 @@ void draw() {
     }
     start = new Date(start.getTime() + TimeUnit.SECONDS.toMillis(60));
     textSize(32);
+    
     fill(232, 193, 2, 255);
     map.draw();
+    image(clock, 30, 30);
+    stroke(232, 193, 2, 255);
+    line(30,70,170,70);
+    image(calendar, 30, 80 );
     textFont(raleway);
-    text(format2.format(start), 35, 35);
+    noStroke();
+    text(hour.format(start), 67, 55);
+    textFont(raleway2);
+    text(day.format(start), 80, 95);
+    text(weekday.format(start), 80, 115);
   } else {
+    markerManager.clearMarkers();
     map.draw();
   }
-  saveFrame("car-######.png");
+  //saveFrame("frames/cars-######.png");
 }
 
 public void keyPressed() {
@@ -183,6 +209,7 @@ class Giorgio extends MapBox.MapBoxProvider {
   public String[] getTileUrls(Coordinate coordinate) {
 
     String url = "http://api.tiles.mapbox.com/v1/giorgiouboldi.ifkdj2f1/"+ getZoomString(coordinate) + ".jpg";
+    println(getZoomString(coordinate));
     return new String[] { 
       url
     };
